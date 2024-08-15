@@ -2,7 +2,6 @@ import torch
 import torchvision
 import numpy as np
 import matplotlib.pyplot as plt
-import torchinfo
 from torchvision import transforms
 from torch import nn
 import os
