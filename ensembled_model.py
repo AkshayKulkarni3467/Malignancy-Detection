@@ -62,12 +62,11 @@ class EnsembledModel:
             output_1 = self.model1(tensor_1)
             output_2 = self.model2(tensor_2)
             output_3 = self.model3(tensor_3)
-        # num_1 = torch.argmax(torch.softmax(torch.concat((output_1[0][0:2],torch.tensor([-100]),output_1[0][3:])),0)).cpu().numpy()
-        # num_2 = torch.argmax(torch.softmax(torch.concat((output_2[0][0:2],torch.tensor([-100]),output_2[0][3:])),0)).cpu().numpy()
-        # num_3 = torch.argmax(torch.softmax(torch.concat((output_3[0][0:2],torch.tensor([-100]),output_3[0][3:])),0)).cpu().numpy()
+        
         num_1 = torch.argmax(torch.softmax(output_1,1)).cpu().numpy()
         num_2 = torch.argmax(torch.softmax(output_2,1)).cpu().numpy()
         num_3 = torch.argmax(torch.softmax(output_3,1)).cpu().numpy()
-        output_list = [int(num_1), int(num_2), int(num_3)]  
-        # most_common_output = max(set(output_list),key=output_list.count)
-        return {'label':int(num_3),'name':category_dict[int(num_3)]}
+        
+        output_list = [int(num_1), int(num_2), int(num_3),int(num_3),int(num_3)]  
+        most_common_output = max(set(output_list),key=output_list.count)
+        return {'label':most_common_output,'name':category_dict[most_common_output]}
