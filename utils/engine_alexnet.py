@@ -96,8 +96,8 @@ def train_step(model: torch.nn.Module,
         optimizer.step()
 
         # Calculate and accumulate accuracy metric across all batches
-        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
-        train_acc += (y_pred_class == y).sum().item()/len(y_pred)
+        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1) # []
+        train_acc += (y_pred_class == y).sum().item()/len(y_pred) 
         tp_0,tp_1,tp_2,tp_3,tp_4,tp_5,tp_6,tp_7 = 0,0,0,0,0,0,0,0
         fn_0,fn_1,fn_2,fn_3,fn_4,fn_5,fn_6,fn_7 =0,0,0,0,0,0,0,0
         fp_0,fp_1,fp_2,fp_3,fp_4,fp_5,fp_6,fp_7 = 0,0,0,0,0,0,0,0
@@ -207,9 +207,10 @@ def train_step(model: torch.nn.Module,
         tpr = tpr + ((tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7)/(tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7 + fn_0+fn_1+fn_2+fn_3+fn_4+fn_5+fn_6+fn_7+1))
         fpr = fpr + ((fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7)/(fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7+tn_0+tn_1+tn_2+tn_3+tn_4+tn_5+tn_6+tn_7+1))
 
-    # Adjust metrics to get average loss and accuracy per batch 
+    # Adjust metrics to get average per batch 
     train_loss = train_loss / len(dataloader)
     train_acc = train_acc / len(dataloader)
+    
     recall_0 = recall_0 / len(dataloader)
     recall_1 = recall_1 / len(dataloader)
     recall_2 = recall_2 / len(dataloader)
@@ -380,7 +381,7 @@ def train(model: torch.nn.Module,
           device=device)
         torch.cuda.empty_cache()
         if epoch % 20 == 0:
-          save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
+          save_model(model=model,target_dir='models/',model_name='alexnet_fine_tuned.pth')
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["train_acc"].append(train_acc)
@@ -413,14 +414,14 @@ def train(model: torch.nn.Module,
         results["test_loss"].append(test_loss)
         results["test_acc"].append(test_acc)
       except:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='alexnet_fine_tuned.pth')
+        with open('metrics/metric_dict_alexnet_finetuned_model.pkl','wb') as f:
             pickle.dump(results,f)
         print("Error training the model at epoch {}".format(epoch))
         return results
     try:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='alexnet_fine_tuned.pth')
+        with open('metrics/metric_dict_alexnet_finetuned_model.pkl','wb') as f:
             pickle.dump(results,f)
     except:
         print('Could not save model')

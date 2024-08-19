@@ -1,6 +1,6 @@
-from trainers.train_efficient_B0_model import train_efficientNet_B0
-from trainers.train_resnet_18_model import train_resnet_18
-from trainers.train_TinyVGG_base_model import train_TinyVGG
+from trainers.train_alexnet_model import train_alexnet
+from trainers.train_resnet_152_model import train_resnet_152
+from trainers.train_convnext_small_model import train_convnext_small
 from trainers.train_ViT_B16_model import train_ViT_B16
 import torch
 import pickle
@@ -10,22 +10,22 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 def trainer(epochs,device):
-    print('Training TinyVGG....')
-    tinyVGG_results = train_TinyVGG(epochs,device)
+    print('Training ConvNext Small....')
+    convnext_small_results = train_convnext_small(epochs,device)
     torch.cuda.empty_cache()
-    print('Training EfficientNet....')
-    efficientNet_B0_results = train_efficientNet_B0(epochs,device)
+    print('Training AlexNet....')
+    alexNet_results = train_alexnet(epochs,device)
     torch.cuda.empty_cache()
     print('Training ResNet....')
-    resnet_18_results = train_resnet_18(epochs,device)
+    resnet_152_results = train_resnet_152(epochs,device)
     torch.cuda.empty_cache()
     print('Training ViT....')
     ViT_B16_results = train_ViT_B16(epochs,device)
     torch.cuda.empty_cache()
-    return efficientNet_B0_results, resnet_18_results, tinyVGG_results,ViT_B16_results
+    return alexNet_results,resnet_152_results, convnext_small_results,ViT_B16_results
 
 if __name__ == "__main__":
-    epochs = 100
+    epochs = 50
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print('Training for {} epochs...'.format(epochs))
     print('Using Device : {}'.format(device))

@@ -1,11 +1,11 @@
 """
 Contains functions for training and testing a PyTorch model.
 """
-import pickle
 import torch
 from pathlib import Path
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
+import pickle
 
 def save_model(model: torch.nn.Module,
                target_dir: str,
@@ -175,7 +175,7 @@ def train_step(model: torch.nn.Module,
             tn_6+=1
           if (i != j) and i != 7:
             tn_7+=1
-            
+
         recall_0 = recall_0 + (tp_0/(tp_0 + fn_0 + 1))
         recall_1 = recall_1 + (tp_1/(tp_1 + fn_1 + 1))
         recall_2 = recall_2 +(tp_2/(tp_2 + fn_2 + 1))
@@ -184,7 +184,7 @@ def train_step(model: torch.nn.Module,
         recall_5 = recall_5 +(tp_5/(tp_5 + fn_5 + 1))
         recall_6 = recall_6 +(tp_6/(tp_6 + fn_6 + 1))
         recall_7 = recall_7 +(tp_7/(tp_7 + fn_7 + 1))
-        
+
         precision_0 = precision_0 + (tp_0/(tp_0 + fp_0 + 1))
         precision_1 = precision_1 + (tp_1/(tp_1 + fp_1 + 1))
         precision_2 = precision_2 + (tp_2/(tp_2 + fp_2 + 1)) 
@@ -193,8 +193,8 @@ def train_step(model: torch.nn.Module,
         precision_5 = precision_5 + (tp_5/(tp_5 + fp_5 + 1))
         precision_6 = precision_6 + (tp_6/(tp_6 + fp_6 + 1))
         precision_7 = precision_7 + (tp_7/(tp_7 + fp_7 + 1))
-        
-        
+
+
         f1_0 = f1_0 + ((2*recall_0*precision_0)/(recall_0+precision_0+1))
         f1_1 = f1_1 + ((2*recall_1*precision_1)/(recall_1+precision_1+1))
         f1_2 = f1_2 + ((2*recall_2*precision_2)/(recall_2+precision_2+1))
@@ -203,7 +203,7 @@ def train_step(model: torch.nn.Module,
         f1_5 = f1_5 + ((2*recall_5*precision_5)/(recall_5+precision_5+1))
         f1_6 = f1_6 + ((2*recall_6*precision_6)/(recall_6+precision_6+1))
         f1_7 = f1_7 + ((2*recall_7*precision_7)/(recall_7+precision_7+1))
-        
+
         tpr = tpr + ((tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7)/(tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7 + fn_0+fn_1+fn_2+fn_3+fn_4+fn_5+fn_6+fn_7+1))
         fpr = fpr + ((fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7)/(fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7+tn_0+tn_1+tn_2+tn_3+tn_4+tn_5+tn_6+tn_7+1))
 
@@ -241,6 +241,10 @@ def train_step(model: torch.nn.Module,
     fpr = fpr / len(dataloader)
     
     return train_loss, train_acc,recall_0,recall_1,recall_2,recall_3,recall_4,recall_5,recall_6,recall_7,precision_0,precision_1,precision_2,precision_3,precision_4,precision_5,precision_6,precision_7,f1_0,f1_1,f1_2,f1_3,f1_4,f1_5,f1_6,f1_7,tpr,fpr
+    
+    
+    
+    return train_loss, train_acc
 
 def test_step(model: torch.nn.Module, 
               dataloader: torch.utils.data.DataLoader, 
@@ -380,7 +384,7 @@ def train(model: torch.nn.Module,
           device=device)
         torch.cuda.empty_cache()
         if epoch % 20 == 0:
-          save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
+          save_model(model=model,target_dir='models/',model_name='resnet_152_fine_tuned.pth')
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["train_acc"].append(train_acc)
@@ -413,14 +417,14 @@ def train(model: torch.nn.Module,
         results["test_loss"].append(test_loss)
         results["test_acc"].append(test_acc)
       except:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='resnet_152_fine_tuned.pth')
+        with open('metrics/metric_dict_resnet_152_finetuned_model.pkl','wb') as f:
             pickle.dump(results,f)
         print("Error training the model at epoch {}".format(epoch))
         return results
     try:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='resnet_152_fine_tuned.pth')
+        with open('metrics/metric_dict_resnet_152_finetuned_model.pkl','wb') as f:
             pickle.dump(results,f)
     except:
         print('Could not save model')

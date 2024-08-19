@@ -28,4 +28,4 @@ def predict(image_path):
     return label_dict
 
 if __name__ == "__main__":
-    predict('data/train/4/EH001_806.jpg')
+    counter_to_check('data/test')

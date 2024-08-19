@@ -7,10 +7,10 @@ from torch import nn
 import os
 from pathlib import Path
 from utils import data_setup
-from utils import engine_efficientNet_B0
+from utils import engine_alexnet
 
 
-def train_efficientNet_B0(epochs,device):
+def train_alexnet(epochs,device):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     image_path = Path('data/')
     image_path.is_dir()
@@ -18,7 +18,7 @@ def train_efficientNet_B0(epochs,device):
     train_dir = image_path/'train'
     test_dir = image_path/'test'
 
-    weights = torchvision.models.EfficientNet_B0_Weights.DEFAULT
+    weights = torchvision.models.AlexNet_Weights.IMAGENET1K_V1
 
     auto_transforms = weights.transforms()
 
@@ -27,20 +27,17 @@ def train_efficientNet_B0(epochs,device):
                                                                                transform=auto_transforms,
                                                                                batch_size=32)
 
-    model = torchvision.models.efficientnet_b0(weights=weights)
+    model = torchvision.models.alexnet(weights=weights)
 
     for param in model.features.parameters():
         param.requires_grad=False
 
-    model.classifier = nn.Sequential(
-        nn.Dropout(p=0.2,inplace=True),
-        nn.Linear(in_features=1280,
-                  out_features=len(class_names))
-    ).to(device)
+    model.classifier[4] = nn.Linear(in_features=4096,out_features=4096,bias=True).to(device)
+    model.classifier[6] = nn.Linear(in_features=4096,out_features=8,bias=True).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(),lr = 0.001)
-    results = engine_efficientNet_B0.train(model = model,
+    results = engine_alexnet.train(model = model,
                            train_dataloader=train_dataloader,
                            test_dataloader=test_dataloader,
                            optimizer=optimizer,

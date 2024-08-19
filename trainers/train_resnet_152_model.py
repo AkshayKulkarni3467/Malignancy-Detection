@@ -8,10 +8,10 @@ from torch import nn
 import os
 from pathlib import Path
 from utils import data_setup
-from utils import engine_resnet_18
+from utils import engine_resnet_152
 
 
-def train_resnet_18(epochs,device):
+def train_resnet_152(epochs,device):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     image_path = Path('data/')
     image_path.is_dir()
@@ -19,7 +19,7 @@ def train_resnet_18(epochs,device):
     train_dir = image_path/'train'
     test_dir = image_path/'test'
     
-    weights = torchvision.models.ResNet18_Weights.DEFAULT
+    weights = torchvision.models.ResNet152_Weights.IMAGENET1K_V1
     
     auto_transforms = weights.transforms()
     
@@ -28,16 +28,16 @@ def train_resnet_18(epochs,device):
                                                                                transform=auto_transforms,
                                                                                batch_size=32)
     
-    model = torchvision.models.resnet18(weights=weights)
+    model = torchvision.models.resnet152(weights=weights)
     
     for param in model.parameters():
         param.requires_grad=False
         
-    model.fc = nn.Linear(in_features=512,out_features=len(class_names)).to(device)
+    model.fc = nn.Linear(in_features=2048,out_features=8,bias=True).to(device)
     
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(params=model.parameters(),lr = 0.001)
-    results = engine_resnet_18.train(model = model,
+    results = engine_resnet_152.train(model = model,
                            train_dataloader=train_dataloader,
                            test_dataloader=test_dataloader,
                            optimizer=optimizer,

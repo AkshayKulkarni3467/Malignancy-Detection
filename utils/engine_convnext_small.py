@@ -207,6 +207,7 @@ def train_step(model: torch.nn.Module,
         tpr = tpr + ((tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7)/(tp_0 + tp_1 + tp_2 + tp_3+tp_4+tp_5+tp_6+tp_7 + fn_0+fn_1+fn_2+fn_3+fn_4+fn_5+fn_6+fn_7+1))
         fpr = fpr + ((fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7)/(fp_0 + fp_1 + fp_2 + fp_3 + fp_4 + fp_5 + fp_6 + fp_7+tn_0+tn_1+tn_2+tn_3+tn_4+tn_5+tn_6+tn_7+1))
 
+
     # Adjust metrics to get average loss and accuracy per batch 
     train_loss = train_loss / len(dataloader)
     train_acc = train_acc / len(dataloader)
@@ -242,6 +243,7 @@ def train_step(model: torch.nn.Module,
     
     return train_loss, train_acc,recall_0,recall_1,recall_2,recall_3,recall_4,recall_5,recall_6,recall_7,precision_0,precision_1,precision_2,precision_3,precision_4,precision_5,precision_6,precision_7,f1_0,f1_1,f1_2,f1_3,f1_4,f1_5,f1_6,f1_7,tpr,fpr
 
+
 def test_step(model: torch.nn.Module, 
               dataloader: torch.utils.data.DataLoader, 
               loss_fn: torch.nn.Module,
@@ -268,6 +270,7 @@ def test_step(model: torch.nn.Module,
 
     # Setup test loss and test accuracy values
     test_loss, test_acc = 0, 0
+    
 
     # Turn on inference context manager
     with torch.inference_mode():
@@ -380,7 +383,7 @@ def train(model: torch.nn.Module,
           device=device)
         torch.cuda.empty_cache()
         if epoch % 20 == 0:
-          save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
+          save_model(model=model,target_dir='models/',model_name='ConvNext_small_fine_tuned.pth')
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["train_acc"].append(train_acc)
@@ -413,14 +416,14 @@ def train(model: torch.nn.Module,
         results["test_loss"].append(test_loss)
         results["test_acc"].append(test_acc)
       except:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='ConvNext_small_fine_tuned.pth')
+        with open('metrics/metric_dict_convnext_small_model.pkl','wb') as f:
             pickle.dump(results,f)
         print("Error training the model at epoch {}".format(epoch))
         return results
     try:
-        save_model(model=model,target_dir='models/',model_name='ViT_B_16_fine_tuned.pth')
-        with open('metrics/metric_dict_vit_B16_finetuned_model.pkl','wb') as f:
+        save_model(model=model,target_dir='models/',model_name='ConvNext_small_fine_tuned.pth')
+        with open('metrics/metric_dict_convnext_small_model.pkl','wb') as f:
             pickle.dump(results,f)
     except:
         print('Could not save model')
